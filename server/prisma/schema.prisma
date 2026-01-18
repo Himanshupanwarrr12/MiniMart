@@ -8,15 +8,17 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String?
   email     String   @unique
   password  String
-  name      String?
   isAdmin   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
+  orders Order[]
 }
 
 model Product {
@@ -28,7 +30,7 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  orderItems OrderItem[]
+  orderItems OrderItems[]
 
   // Relations
 }
@@ -38,8 +40,8 @@ model Order {
   userId    Int
   createdAt DateTime    @default(now())
   status    OrderStatus @default(PENDING)
-
-  items OrderItem[]
+  user  User        @relation(fields: [userId], references: [id])
+  items OrderItems[]
 }
 
 enum OrderStatus {
@@ -48,13 +50,28 @@ enum OrderStatus {
   PAID
 }
 
-model OrderItem {
+model OrderItems {
   id        Int     @id @default(autoincrement())
   orderId   Int
   productId Int
   quantity  Int
   price     Decimal
 
-  order     Order   @relation(fields: [orderId], references: [id])
-  product   Product @relation(fields: [productId], references: [id])
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Cart {
+  id  Int @id @default(autoincrement())
+  userId Int
+
+  user  User @relation(fields: [userId],references: [id])
+  items  CartItems[]
+}
+
+model CartItems {
+  id Int @id @default(autoincrement())
+  quantity Int
+  price  Decimal
+  product Product @relation(fields: [productId],references: [id])
 }
