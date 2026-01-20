@@ -13,13 +13,20 @@ model User {
   lastName  String?
   email     String   @unique
   password  String
-  isAdmin   Boolean  @default(false)
+  role Role @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relations
   orders Order[]
+  cart Cart[]
+
 }
+
+enum Role {
+  USER
+  ADMIN
+}
+
 
 model Product {
   id          Int      @id @default(autoincrement())
@@ -31,8 +38,7 @@ model Product {
   updatedAt   DateTime @updatedAt
 
   orderItems OrderItems[]
-
-  // Relations
+  cartItems CartItems[]
 }
 
 model Order {
@@ -46,8 +52,10 @@ model Order {
 
 enum OrderStatus {
   PENDING
+  processing
   SHIPPED
-  PAID
+  delivered
+  cancelled
 }
 
 model OrderItems {
@@ -73,5 +81,10 @@ model CartItems {
   id Int @id @default(autoincrement())
   quantity Int
   price  Decimal
+
+  productId Int
   product Product @relation(fields: [productId],references: [id])
+
+  cartId Int
+  cart Cart @relation(fields: [cartId],references: [id])
 }
