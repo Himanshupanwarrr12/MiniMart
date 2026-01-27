@@ -1,5 +1,5 @@
 import type { Request } from "express";
-import validator, { trim } from "validator";
+import validator from "validator";
 
 interface SignUpData {
   email: string;
