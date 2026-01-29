@@ -6,17 +6,22 @@ import dotenv from "dotenv"
 import cors from "cors"
 
 dotenv.config()
-
-const port = process.env.PORT || "5000"
-
 app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
+
+//api routes
+import authRouter from "./routes/auth.js";
+
+
+app.use("/",authRouter)
 
 app.get("/",(req:Request,res:Response)=>{
     res.send("Express server is running")
 })
 
-app.listen(port,()=>{
-    console.log(`server is listening on port ${port}`)
+const PORT= process.env.PORT || "5000"
+
+app.listen(PORT,()=>{
+    console.log(`server is listening on port ${PORT}`)
 })
