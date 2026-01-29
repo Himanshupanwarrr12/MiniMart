@@ -14,7 +14,18 @@ interface ValidationResult {
 
 export function validateSignUpData(req: Request): ValidationResult {
   const errors: string[] = [];
-  const { email, password } = req.body || {};
+  const { fullName, email, password } = req.body || {};
+
+  const trimmedFullName = fullName?.trim();
+  if (!trimmedFullName) {
+    errors.push("Full name is required!");
+  } else if (trimmedFullName.length < 3) {
+    errors.push("Full name must be at least 3 characters long!");
+  } else if (trimmedFullName.length > 100) {
+    errors.push("Full name must not exceed 100 characters!");
+  } else if (!validator.matches(trimmedFullName, /^[a-zA-Z ]+$/)) {
+    errors.push("Full name should only contain letters and spaces!");
+  }
 
   //validate email
   const trimmedEmail = email?.trim();
@@ -36,12 +47,14 @@ export function validateSignUpData(req: Request): ValidationResult {
       minSymbols: 1,
     })
   ) {
-    errors.push("Password must be at least 8 characters with uppercase, lowercase, numbers, and symbols");
+    errors.push(
+      "Password must be at least 8 characters with uppercase, lowercase, numbers, and symbols",
+    );
   }
 
   return {
-    isValid : errors.length === 0,
+    isValid: errors.length === 0,
     errors,
-    data: errors.length === 0 ? { email:trimmedEmail,password } : undefined
-  }
+    data: errors.length === 0 ? { email: trimmedEmail, password } : undefined,
+  };
 }
