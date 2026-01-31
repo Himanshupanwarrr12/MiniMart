@@ -1,44 +1,43 @@
-import type { Request } from "express";
-import validator from "validator";
+import validator, { trim } from "validator";
 
-interface SignUpData {
+interface SignUpReq {
+  fullName: string;
   email: string;
   password: string;
 }
 
-interface ValidationResult {
-  isValid: boolean;
-  errors: string[];
-  data: SignUpData | undefined;
-}
+export function validateSignUpData(body: SignUpReq): void {
+  const { fullName, email, password } = body
 
-export function validateSignUpData(req: Request): ValidationResult {
-  const errors: string[] = [];
-  const { fullName, email, password } = req.body || {};
-
+  //fullName validate
   const trimmedFullName = fullName?.trim();
   if (!trimmedFullName) {
-    errors.push("Full name is required!");
-  } else if (trimmedFullName.length < 3) {
-    errors.push("Full name must be at least 3 characters long!");
-  } else if (trimmedFullName.length > 100) {
-    errors.push("Full name must not exceed 100 characters!");
-  } else if (!validator.matches(trimmedFullName, /^[a-zA-Z ]+$/)) {
-    errors.push("Full name should only contain letters and spaces!");
+    throw new Error("Full name is required");
+  }
+  if (trimmedFullName.length < 3 || trimmedFullName.length > 100) {
+    throw new Error("Full name must be between 3 and 100 characters");
+  }
+  if (!validator.matches(trimmedFullName, /^[a-zA-Z ]+$/)) {
+    throw new Error("Full name can contain only letters and spaces");
   }
 
-  //validate email
+  //email validate
   const trimmedEmail = email?.trim();
-  if (!trimmedEmail) {
-    errors.push("Email Is Required!");
-  } else if (!validator.isEmail(trimmedEmail)) {
-    errors.push("Please Provide  A Valid Email Address!");
-  }
+  console.log("Email",trimmedEmail)
 
-  // validate password
+  if (!trimmedEmail) {
+    throw new Error("Email is required");
+  }
+  if (!validator.isEmail(trimmedEmail)) {
+    throw new Error("Invalid email address");
+  }
+  console.log("Email",trimmedEmail)
+
+  //password validate
   if (!password) {
-    errors.push("Password Is Required");
-  } else if (
+    throw new Error("Password is required");
+  }
+  if (
     !validator.isStrongPassword(password, {
       minLength: 8,
       minLowercase: 1,
@@ -46,15 +45,10 @@ export function validateSignUpData(req: Request): ValidationResult {
       minNumbers: 1,
       minSymbols: 1,
     })
-  ) {
-    errors.push(
-      "Password must be at least 8 characters with uppercase, lowercase, numbers, and symbols",
+  )
+   {
+    throw new Error(
+      "Password must contain uppercase, lowercase, number, and symbol",
     );
   }
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-    data: errors.length === 0 ? { email: trimmedEmail, password } : undefined,
-  };
 }
