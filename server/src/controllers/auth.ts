@@ -93,10 +93,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const user = await prisma.user.findUnique({ where: {email} });
+    const user = await prisma.user.findUnique({ where: {email:email.trim()} });
 
     if (!user) {
-      res.status(400).json({
+      res.status(401).json({
+        success : false,
         error: "Invalid Credentials",
       });
       return;
@@ -106,6 +107,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     if (!validatePass) {
       res.status(401).json({ success: false, error: "Invalid Credentials" });
+      return;
     }
 
     const token = generateUserJWT(user);
@@ -119,7 +121,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({
       success: true,
-      message: "login successfully!",
+      message: "Login successful",
       data: {
         id: user.id,
         firstName: user.firstName,
@@ -137,3 +139,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     });
   }
 };
+
+export const logout = async (req: Request , res : Response) : Promise<void> => {
+
+  
+}
