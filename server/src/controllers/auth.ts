@@ -3,6 +3,7 @@ import { validateSignUpData } from "../utils/validation.js";
 import jwt from "jsonwebtoken";
 import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcrypt";
+import { generateUserJWT } from "../utils/jwt.js";
 
 const genrateToken = (userId: number): string => {
   const secret = process.env.JWT_SECRET;
@@ -16,13 +17,11 @@ const genrateToken = (userId: number): string => {
 //signUp controller
 export const signUp = async (req: Request, res: Response): Promise<void> => {
   try {
-    validateSignUpData(req.body)
+    validateSignUpData(req.body);
 
-    const { fullName, email, password } = req.body
+    const { fullName, email, password } = req.body;
 
-    const nameParts = fullName
-      .trim()
-      .split(/\s+/)
+    const nameParts = fullName.trim().split(/\s+/);
 
     if (nameParts.length === 0) {
       res.status(400).json({
@@ -76,6 +75,62 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
     });
   } catch (error: unknown) {
     console.log("Error in signUp");
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : "Internal server error",
+    });
+  }
+};
+
+export const login = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      res
+        .status(400)
+        .json({ success: false, error: "Email and password are required" });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({ where: {email} });
+
+    if (!user) {
+      res.status(400).json({
+        error: "Invalid Credentials",
+      });
+      return;
+    }
+
+    const validatePass = await bcrypt.compare(password, user.password);
+
+    if (!validatePass) {
+      res.status(401).json({ success: false, error: "Invalid Credentials" });
+    }
+
+    const token = generateUserJWT(user);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "login successfully!",
+      data: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    console.log("Error in login", error);
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : "Internal server error",
