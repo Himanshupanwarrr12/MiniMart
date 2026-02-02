@@ -5,15 +5,6 @@ import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcrypt";
 import { generateUserJWT } from "../utils/jwt.js";
 
-const genrateToken = (userId: number): string => {
-  const secret = process.env.JWT_SECRET;
-
-  if (!secret) {
-    throw new Error("SECRET KEY IS REQUIRED");
-  }
-  return jwt.sign({ userId }, secret, { expiresIn: "7d" });
-};
-
 //signUp controller
 export const signUp = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -50,6 +41,7 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
         firstName,
         lastName,
         email,
+        role: "USER",
         password: hashPass,
       },
       select: {
@@ -61,7 +53,7 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
       },
     });
 
-    const token = genrateToken(user.id);
+    const token = generateUserJWT(user)
     res.cookie("token", token, {
       httpOnly: true,
       secure: false, //change in prod
