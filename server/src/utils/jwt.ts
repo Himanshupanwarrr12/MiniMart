@@ -5,9 +5,8 @@ export function generateUserJWT(user: UserModel): string {
   const secretKey = process.env.JWT_SECRET;
   
   if (!secretKey) {
-    throw new Error("JWT_SECRET is required");
+    throw new Error("JWT_SECRET Is Required!!");
   }
   
-  const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: "7d" });
-  return token;
+  return jwt.sign({ id: user.id }, secretKey, { expiresIn: "7d" });
 }
