@@ -53,7 +53,7 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
       },
     });
 
-    const token = generateUserJWT(user)
+    const token = generateUserJWT(user.id)
     res.cookie("token", token, {
       httpOnly: true,
       secure: false, //change in prod
@@ -102,7 +102,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const token = generateUserJWT(user);
+    const token = generateUserJWT(user.id);
 
     res.cookie("token", token, {
       httpOnly: true,
