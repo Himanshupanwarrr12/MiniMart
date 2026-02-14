@@ -1,5 +1,9 @@
 import express from "express"
-import { products } from "../controllers/productController.js"
-const profileRouter = express.Router()
+import { createProduct, getAllProducts } from "../controllers/productController.js"
+import { authenticateToken, isAdmin } from "../middleware/auth.js"
+const productRouter = express.Router()
 
-profileRouter.get("/products",products)
+productRouter.get("/products",getAllProducts)
+productRouter.post("/admin/products",authenticateToken,isAdmin,createProduct)
+
+export default productRouter
