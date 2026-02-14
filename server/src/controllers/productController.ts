@@ -1,6 +1,86 @@
-import type { Request,Response } from "express"
-export const products = async (req: Request,res:Response)=> {
+import type { Request, Response } from "express";
+import * as productService from "../services/productService.js";
 
-    
-    
-}
+//products - See all products (FOR USERS)
+export const getAllProducts = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const {
+      page = "1",
+      limit = "20",
+      search,
+      minPrice,
+      maxPrice,
+      sortBy = "createdAt",
+      order = "desc",
+    } = req.query;
+
+    const filters = {
+      search: search as string,
+      minPrice: minPrice ? parseFloat(minPrice as string) : undefined,
+      maxPrice: maxPrice ? parseFloat(maxPrice as string) : undefined,
+    };
+
+    const pagination = {
+      page: parseInt(page as string),
+      limit: parseInt(limit as string),
+      sortBy: sortBy as string,
+      order: order as "asc" | "desc",
+    };
+
+    const result = await productService.getProductsWithPagination(filters, pagination);
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : "Internal server error",
+    });
+  }
+};
+
+// POST /admin/products - Add product (FOR ADMIN)
+export const createProduct = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { name, price, description, image } = req.body;
+
+    // Validation
+    if (!name || !price || !image) {
+      res.status(400).json({
+        success: false,
+        error: "Name, price, and image are required",
+      });
+      return;
+    }
+
+    if (price <= 0) {
+      res.status(400).json({
+        success: false,
+        error: "Price must be greater than 0",
+      });
+      return;
+    }
+
+    const product = await productService.createNewProduct({
+      name,
+      price,
+      description,
+      image,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Product created successfully",
+      data: product,
+    });
+  } catch (error) {
+    console.error("Error creating product:", error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : "Internal server error",
+    });
+  }
+};
