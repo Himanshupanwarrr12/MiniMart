@@ -13,9 +13,11 @@ app.use(cookieParser())
 //api routes
 import authRouter from "./routes/auth.js";
 import productRouter from "./routes/product.js";
+import cartRouter from "./routes/cart.js";
 
 app.use("/",authRouter)
 app.use("/",productRouter)
+app.use("/",cartRouter)
 
 app.get("/",(req:Request,res:Response)=>{
     res.send("Express server is running")
