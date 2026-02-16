@@ -13,7 +13,6 @@ interface PaginationOptions {
   order: "asc" | "desc";
 }
 
-// Get all products with filters (FOR USERS)
 export const getProductsWithPagination = async (
   filters: ProductFilters,
   pagination: PaginationOptions
@@ -37,7 +36,6 @@ export const getProductsWithPagination = async (
     if (maxPrice) where.price.lte = maxPrice;
   }
 
-  // Fetch products
   const [products, totalCount] = await Promise.all([
     prisma.product.findMany({
       where,
@@ -72,7 +70,6 @@ export const getProductsWithPagination = async (
   };
 };
 
-// Get single product by ID with full details
 export const getProductById = async (id: number) => {
   const product = await prisma.product.findUnique({
     where: { id },
@@ -91,9 +88,8 @@ export const getProductById = async (id: number) => {
     return null;
   }
 
-  // Calculate stock status
-  const inStock = true; // Placeholder - add stock field in schema
-  const stockQuantity = 23; // Placeholder - add stock_quantity field
+  const inStock = true; 
+  const stockQuantity = 23; 
 
   return {
     ...product,
@@ -105,7 +101,6 @@ export const getProductById = async (id: number) => {
   };
 };
 
-// Get related products (same category or price range)
 export const getRelatedProducts = async (
   productId: number,
   limit: number = 4
@@ -119,7 +114,6 @@ export const getRelatedProducts = async (
 
   const productPrice = Number(product.price);
 
-  // Find products with similar price range (±20%)
   const minPrice = productPrice * 0.8;
   const maxPrice = productPrice * 1.2;
 
@@ -141,7 +135,6 @@ export const getRelatedProducts = async (
   });
 };
 
-// Create product (FOR ADMIN)
 export const createNewProduct = async (data: {
   name: string;
   price: number;
