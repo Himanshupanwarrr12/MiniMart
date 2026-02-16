@@ -42,6 +42,52 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
   }
 };
 
+// GET /products/:id - Get single product with full details
+export const getProductDetails = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const productId = parseInt(req.params.id as string);
+
+    // Validate ID
+    if (isNaN(productId)) {
+      res.status(400).json({
+        success: false,
+        error: "Invalid product ID",
+      });
+      return;
+    }
+
+    // Get product details
+    const product = await productService.getProductById(productId);
+
+    // Handle product not found
+    if (!product) {
+      res.status(404).json({
+        success: false,
+        error: "Product not found",
+      });
+      return;
+    }
+
+    // Get related products
+    const relatedProducts = await productService.getRelatedProducts(productId, 4);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        product,
+        relatedProducts,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching product details:", error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : "Internal server error",
+    });
+  }
+};
+
+
 // POST /admin/products - Add product (FOR ADMIN)
 export const createProduct = async (req: Request, res: Response): Promise<void> => {
   try {
