@@ -72,6 +72,75 @@ export const getProductsWithPagination = async (
   };
 };
 
+// Get single product by ID with full details
+export const getProductById = async (id: number) => {
+  const product = await prisma.product.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      description: true,
+      image: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  if (!product) {
+    return null;
+  }
+
+  // Calculate stock status
+  const inStock = true; // Placeholder - add stock field in schema
+  const stockQuantity = 23; // Placeholder - add stock_quantity field
+
+  return {
+    ...product,
+    inStock,
+    stockQuantity,
+    stockStatus: inStock
+      ? `In Stock (${stockQuantity} available)`
+      : "Out of Stock",
+  };
+};
+
+// Get related products (same category or price range)
+export const getRelatedProducts = async (
+  productId: number,
+  limit: number = 4
+) => {
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    select: { price: true },
+  });
+
+  if (!product) return [];
+
+  const productPrice = Number(product.price);
+
+  // Find products with similar price range (±20%)
+  const minPrice = productPrice * 0.8;
+  const maxPrice = productPrice * 1.2;
+
+  return await prisma.product.findMany({
+    where: {
+      id: { not: productId },
+      price: {
+        gte: minPrice,
+        lte: maxPrice,
+      },
+    },
+    take: limit,
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      image: true,
+    },
+  });
+};
+
 // Create product (FOR ADMIN)
 export const createNewProduct = async (data: {
   name: string;
