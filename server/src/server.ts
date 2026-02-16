@@ -14,10 +14,12 @@ app.use(cookieParser())
 import authRouter from "./routes/auth.js";
 import productRouter from "./routes/product.js";
 import cartRouter from "./routes/cart.js";
+import orderRouter from "./routes/order.js";
 
 app.use("/",authRouter)
 app.use("/",productRouter)
 app.use("/",cartRouter)
+app.use("/",orderRouter)
 
 app.get("/",(req:Request,res:Response)=>{
     res.send("Express server is running")
