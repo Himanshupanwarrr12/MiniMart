@@ -14,12 +14,47 @@ export const createOrder = async (
       return;
     }
 
-    const order = await orderService.createOrderFromCart(req.user.id);
+    const { addressId } = req.body;
+
+    if (!addressId) {
+      res.status(400).json({
+        success: false,
+        error: "Address ID is required",
+      });
+      return;
+    }
+
+    const addressIdNum = Number(addressId);
+
+    if (isNaN(addressIdNum) || addressIdNum < 1) {
+      res.status(400).json({
+        success: false,
+        error: "Invalid address ID",
+      });
+      return;
+    }
+
+    const order = await orderService.createOrderFromCart(req.user.id, addressIdNum);
+
+    if (!order) {
+      res.status(500).json({
+        success: false,
+        error: "Failed to create order",
+      });
+      return;
+    }
+
+    await orderService.updateOrderStatus(order.id, "PAID");
 
     res.status(201).json({
       success: true,
-      message: "Order created successfully",
-      data: order,
+      message: "Order placed successfully!",
+      data: {
+        orderId: order.id,
+        status: "PAID",
+        total: order.summary.total,
+        estimatedDelivery: order.estimatedDelivery,
+      },
     });
   } catch (error) {
     console.error("Error creating order:", error);
