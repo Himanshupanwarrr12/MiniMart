@@ -1,6 +1,7 @@
 import { prisma } from "../lib/prisma.js";
+type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
-export const createOrderFromCart = async (userId: number) => {
+export const createOrderFromCart = async (userId: number, addressId: number) => {
   const cart = await prisma.cart.findFirst({
     where: { userId },
     include: {
@@ -16,10 +17,22 @@ export const createOrderFromCart = async (userId: number) => {
     throw new Error("Cart is empty");
   }
 
+  const address = await prisma.address.findFirst({
+    where: {
+      id: addressId,
+      userId,
+    },
+  });
+
+  if (!address) {
+    throw new Error("Address not found");
+  }
+
   const order = await prisma.$transaction(async (tx) => {
     const newOrder = await tx.order.create({
       data: {
         userId,
+        addressId,
         status: "PENDING",
       },
     });
@@ -162,6 +175,13 @@ export const getUserOrders = async (userId: number) => {
   });
 };
 
+export const updateOrderStatus = async (orderId: number, status: OrderStatus) => {
+  return await prisma.order.update({
+    where: { id: orderId },
+    data: { status },
+  });
+};
+
 export const cancelOrder = async (userId: number, orderId: number) => {
   const order = await prisma.order.findFirst({
     where: {
@@ -174,17 +194,17 @@ export const cancelOrder = async (userId: number, orderId: number) => {
     throw new Error("Order not found");
   }
 
-  if (order.status === "SHIPPED" || order.status === "delivered") {
+  if (order.status === "SHIPPED" || order.status === "DELIVERED") {
     throw new Error("Cannot cancel shipped or delivered orders");
   }
 
-  if (order.status === "cancelled") {
+  if (order.status === "CANCELLED") {
     throw new Error("Order is already cancelled");
   }
 
   return await prisma.order.update({
     where: { id: orderId },
-    data: { status: "cancelled" },
+    data: { status: "CANCELLED" },
     include: {
       items: {
         include: {
