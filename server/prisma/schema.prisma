@@ -13,13 +13,13 @@ model User {
   lastName  String?
   email     String   @unique
   password  String
-  role Role @default(USER)
+  role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  orders Order[]
-  cart Cart[]
-
+  orders  Order[]
+  cart    Cart[]
+  address Address[]
 }
 
 enum Role {
@@ -27,6 +27,24 @@ enum Role {
   ADMIN
 }
 
+model Address {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  fullName     String
+  phoneNumber  String
+  addressLine1 String
+  addressLine2 String?
+  city         String
+  state        String
+  pinCode      String
+  addressType  String?  @default("Home")
+  isDefault    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id])
+  orders Order[]
+}
 
 model Product {
   id          Int      @id @default(autoincrement())
@@ -38,26 +56,29 @@ model Product {
   updatedAt   DateTime @updatedAt
 
   orderItems OrderItems[]
-  cartItems CartItems[]
+  cartItems  CartItems[]
 }
 
 model Order {
   id        Int         @id @default(autoincrement())
   userId    Int
+  addressId Int?
   createdAt DateTime    @default(now())
   status    OrderStatus @default(PENDING)
-  user  User        @relation(fields: [userId], references: [id])
-  items OrderItems[]
+
+  user    User         @relation(fields: [userId], references: [id])
+  address Address?     @relation(fields: [addressId], references: [id])
+  items   OrderItems[]
 }
 
 enum OrderStatus {
   PENDING
-  processing
+  PAID
+  PROCESSING
   SHIPPED
-  delivered
-  cancelled
+  DELIVERED
+  CANCELLED
 }
-
 model OrderItems {
   id        Int     @id @default(autoincrement())
   orderId   Int
@@ -70,21 +91,21 @@ model OrderItems {
 }
 
 model Cart {
-  id  Int @id @default(autoincrement())
+  id     Int @id @default(autoincrement())
   userId Int
 
-  user  User @relation(fields: [userId],references: [id])
-  items  CartItems[]
+  user  User        @relation(fields: [userId], references: [id])
+  items CartItems[]
 }
 
 model CartItems {
-  id Int @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   quantity Int
-  price  Decimal
+  price    Decimal
 
   productId Int
-  product Product @relation(fields: [productId],references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 
   cartId Int
-  cart Cart @relation(fields: [cartId],references: [id])
+  cart   Cart @relation(fields: [cartId], references: [id])
 }
