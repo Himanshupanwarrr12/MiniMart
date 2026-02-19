@@ -4,7 +4,6 @@ import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcrypt";
 import { generateUserJWT } from "../utils/jwt.js";
 
-//signUp controller
 export const signUp = async (req: Request, res: Response): Promise<void> => {
   try {
     validateSignUpData(req.body);
