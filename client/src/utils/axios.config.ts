@@ -1,13 +1,13 @@
 import axios from "axios";
 
-const api = axios.create({
+const axiosInstance = axios.create({
   baseURL: "http://localhost:5000", 
   timeout: 10000,                   
   withCredentials: true,            
 });
 
 // Request Interceptor
-api.interceptors.request.use(
+axiosInstance.interceptors.request.use(
   (config) => {
     console.log(`➡️ ${config.method?.toUpperCase()} to: ${config.url}`);
     return config;
@@ -19,7 +19,7 @@ api.interceptors.request.use(
 );
 
 // Response Interceptor
-api.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
@@ -49,4 +49,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default axiosInstance
