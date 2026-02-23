@@ -8,14 +8,19 @@ export interface Product {
   description?: string;
   image?: string;
   stock?: number;
+  stockQuantity?: number;  
+  inStock?: boolean;       
+  stockStatus?: string; 
 }
 
 interface ProductState {
   items: Product[];
+  selectedProduct: Product | null;  
   loading: boolean;
   error: string | null;
 }
-// asyncthunk call 
+
+
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async () => {
@@ -24,14 +29,28 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
+export const fetchProductById = createAsyncThunk(
+  "products/fetchProductById",
+  async (productId: number) => {
+    const response = await axiosInstance.get(`/products/${productId}`);
+    return response.data.data.product
+  }
+);
+
+
 const productSlice = createSlice({
   name: "products",
   initialState: {
     items: [],
+    selectedProduct: null,
     loading: false,
     error: null,
   } as ProductState,
-  reducers: {},
+  reducers: {
+    clearSelectedProduct: (state) => {
+      state.selectedProduct = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.pending, (state) => {
@@ -46,7 +65,22 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || "Failed to fetch products";
       });
+
+    builder
+      .addCase(fetchProductById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedProduct = action.payload;
+      })
+      .addCase(fetchProductById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch product";
+      });
   },
 });
 
+export const { clearSelectedProduct } = productSlice.actions;
 export default productSlice.reducer;
