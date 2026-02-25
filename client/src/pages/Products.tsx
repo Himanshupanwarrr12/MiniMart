@@ -84,11 +84,6 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-[#F8F9FA] py-12 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#000000] mb-2">Our Products</h1>
-          <p className="text-gray-600">{products.length} products available</p>
-        </div>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map((product: Product) => {
             const isAdding = addingIds.has(product.id);
