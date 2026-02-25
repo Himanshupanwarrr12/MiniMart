@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ShoppingCart, ChevronDown, Package } from "lucide-react";
 
 interface NavbarProps {
@@ -11,6 +12,7 @@ const Navbar: React.FC<NavbarProps> = ({
   cartCount = 3,
 }) => {
   const [accountOpen, setAccountOpen] = useState<boolean>(false);
+  const navigate = useNavigate()
 
   return (
     <nav className="bg-gray-900 text-white w-full">
@@ -91,7 +93,8 @@ const Navbar: React.FC<NavbarProps> = ({
             </span>
           </button>
 
-          <button className="flex items-center gap-2 px-3 py-2 rounded  hover:outline-1 hover:outline-white transition-all relative">
+          <button className="flex items-center gap-2 px-3 py-2 rounded  hover:outline-1 hover:outline-white transition-all relative"
+          onClick={()=> navigate("/cart")}>
             <div className="relative">
               <ShoppingCart size={28} />
               {cartCount > 0 && (
