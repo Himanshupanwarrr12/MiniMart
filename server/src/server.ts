@@ -22,6 +22,7 @@ import orderRouter from "./routes/order.js";
 import adminRouter from "./routes/admin.js";
 import addressRouter from "./routes/address.js";
 import checkoutRouter from "./routes/checkout.js";
+import { prisma } from "./lib/prisma.js";
 
 app.use("/",authRouter)
 app.use("/",productRouter)
@@ -34,6 +35,15 @@ app.use("/",checkoutRouter)
 app.get("/",(req:Request,res:Response)=>{
     res.send("Express server is running")
 })
+
+setInterval(async () => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    console.log('💓 Heartbeat sent at', new Date().toISOString());
+  } catch (error:any) {
+    console.error('💔 Heartbeat failed:', error.message);
+  }
+}, 240000); // 4 minutes
 
 const PORT= process.env.PORT || "5000"
 
