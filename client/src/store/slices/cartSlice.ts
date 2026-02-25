@@ -40,39 +40,48 @@ const initialState: CartState = {
   error: null,
 };
 
-export const fetchCart = createAsyncThunk("cart/fetchCart", async () => {
-  const response = await axiosInstance.get("/cart");
-  return response.data.data as { items: CartItem[]; summary: CartSummary };
+function calcSummary(items: CartItem[]): CartSummary {
+  const subtotal = items.reduce(
+    (sum, i) => sum + Number(i.price) * i.quantity,
+    0
+  );
+  const tax = subtotal * 0.18;
+  const shipping = subtotal >= 500 ? 0 : 49;
+  const total = subtotal + tax + shipping;
+  return {
+    subtotal: subtotal.toFixed(2),
+    tax: tax.toFixed(2),
+    shipping: shipping.toFixed(2),
+    total: total.toFixed(2),
+    itemCount: items.reduce((sum, i) => sum + i.quantity, 0),
+  };
+}
+
+export const fetchCart = createAsyncThunk("cart/fetch", async () => {
+  const res = await axiosInstance.get("/cart");
+  return res.data.data as { items: CartItem[]; summary: CartSummary };
 });
 
 export const addToCart = createAsyncThunk(
-  "cart/addToCart",
-  async (
-    { productId, quantity = 1 }: { productId: number; quantity?: number },
-    { dispatch }
-  ) => {
-    await axiosInstance.post("/cart/add", { productId, quantity });
-    dispatch(fetchCart());
+  "cart/add",
+  async ({ productId, quantity = 1 }: { productId: number; quantity?: number }) => {
+    const res = await axiosInstance.post("/cart/add", { productId, quantity });
+    return res.data.data as CartItem;
   }
 );
 
 export const updateQuantity = createAsyncThunk(
   "cart/updateQuantity",
-  async (
-    { itemId, quantity }: { itemId: number; quantity: number },
-    { dispatch }
-  ) => {
+  async ({ itemId, quantity }: { itemId: number; quantity: number }) => {
     await axiosInstance.put(`/cart/${itemId}`, { quantity });
-    dispatch(fetchCart());
-    return itemId;
+    return { itemId, quantity };
   }
 );
 
 export const removeItem = createAsyncThunk(
   "cart/removeItem",
-  async (itemId: number, { dispatch }) => {
+  async (itemId: number) => {
     await axiosInstance.delete(`/cart/${itemId}`);
-    dispatch(fetchCart());
     return itemId;
   }
 );
@@ -98,39 +107,53 @@ const cartSlice = createSlice({
       })
       .addCase(fetchCart.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to fetch cart";
+        state.error = action.error.message ?? "Failed to fetch cart";
       });
 
     builder
       .addCase(addToCart.pending, (state) => {
         state.error = null;
       })
+      .addCase(addToCart.fulfilled, (state, action) => {
+        const exists = state.items.find((i) => i.id === action.payload.id);
+        if (exists) {
+          exists.quantity += action.payload.quantity;
+        } else {
+          state.items.push(action.payload);
+        }
+        state.summary = calcSummary(state.items);
+      })
       .addCase(addToCart.rejected, (state, action) => {
-        state.error = action.error.message || "Failed to add item to cart";
+        state.error = action.error.message ?? "Failed to add item";
       });
 
     builder
       .addCase(updateQuantity.pending, (state, action) => {
         state.actionLoading[action.meta.arg.itemId] = true;
+        const item = state.items.find((i) => i.id === action.meta.arg.itemId);
+        if (item) item.quantity = action.meta.arg.quantity;
+        state.summary = calcSummary(state.items);
       })
       .addCase(updateQuantity.fulfilled, (state, action) => {
-        delete state.actionLoading[action.payload];
+        delete state.actionLoading[action.payload.itemId];
       })
       .addCase(updateQuantity.rejected, (state, action) => {
         delete state.actionLoading[action.meta.arg.itemId];
-        state.error = action.error.message || "Failed to update quantity";
+        state.error = action.error.message ?? "Failed to update quantity";
       });
 
     builder
       .addCase(removeItem.pending, (state, action) => {
         state.actionLoading[action.meta.arg] = true;
+        state.items = state.items.filter((i) => i.id !== action.meta.arg);
+        state.summary = calcSummary(state.items);
       })
       .addCase(removeItem.fulfilled, (state, action) => {
         delete state.actionLoading[action.payload];
       })
       .addCase(removeItem.rejected, (state, action) => {
         delete state.actionLoading[action.meta.arg];
-        state.error = action.error.message || "Failed to remove item";
+        state.error = action.error.message ?? "Failed to remove item";
       });
   },
 });
