@@ -9,7 +9,6 @@ import type { CartItem } from "../store/slices/cartSlice";
 import type { Product } from "../store/slices/productSlice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 
-// ── Estimated delivery: 3–5 days from today ───────────────────────────────────
 function getDeliveryRange() {
   const fmt = (d: Date) =>
     d.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
@@ -21,7 +20,6 @@ function getDeliveryRange() {
 export default function CartPage() {
   const dispatch = useAppDispatch();
 
-  // ⚠️ Add cartReducer to your store under the key "cart"
   const { items, summary, loading, actionLoading, error } = useAppSelector(
     (s) => s.cart
   );
@@ -40,10 +38,10 @@ export default function CartPage() {
     dispatch(updateQuantity({ itemId, quantity: next }));
   };
 
-  const subtotal = summary ? Number(summary.subtotal) : 0;
-  const shipping = summary ? Number(summary.shipping) : 0;
+  const subtotal  = summary ? Number(summary.subtotal) : 0;
+  const shipping  = summary ? Number(summary.shipping) : 0;
 
-  // ── Empty state ─────────────────────────────────────────────────────────────
+  // ── Empty state ──────────────────────────────────────────────────────────────
   if (!loading && items.length === 0) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-5 px-4">
@@ -56,7 +54,7 @@ export default function CartPage() {
         </div>
         <Link
           to="/products"
-          className="flex items-center gap-2 bg-gray-900 text-white text-sm font-medium px-6 py-2.5 rounded-full hover:bg-gray-700 transition"
+          className="flex items-center gap-2 bg-black text-white text-sm font-medium px-6 py-2.5 rounded-full hover:bg-gray-800 transition"
         >
           Browse Products <ArrowRight className="w-4 h-4" />
         </Link>
@@ -68,19 +66,19 @@ export default function CartPage() {
     <div className="min-h-screen bg-white">
       <div className="max-w-5xl mx-auto px-4 py-10">
 
-        {/* ── Header ───────────────────────────────────────────────────────── */}
+        {/* ── Header ───────────────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">
-            Cart
+          <h1 className="text-2xl font-black uppercase tracking-tight text-black" style={{ letterSpacing: "-1px" }}>
+            Your Cart
             {summary && (
-              <span className="ml-2 text-base font-normal text-gray-400">
-                ({summary.itemCount})
+              <span className="ml-2 text-base font-normal text-gray-400 tracking-normal">
+                ({summary.itemCount} items)
               </span>
             )}
           </h1>
           <Link
             to="/products"
-            className="text-sm text-gray-400 hover:text-gray-700 transition flex items-center gap-1"
+            className="text-sm text-gray-400 hover:text-black transition flex items-center gap-1"
           >
             Continue Shopping <ChevronRight className="w-3.5 h-3.5" />
           </Link>
@@ -94,11 +92,11 @@ export default function CartPage() {
 
         <div className="flex flex-col lg:flex-row gap-10">
 
-          {/* ── Items list ───────────────────────────────────────────────────── */}
+          {/* ── Items List ───────────────────────────────────────────────────────── */}
           <div className="flex-1 space-y-px">
 
             {/* Column headers — desktop only */}
-            <div className="hidden md:grid grid-cols-12 text-xs font-medium text-gray-400 uppercase tracking-wide pb-3 border-b border-gray-100">
+            <div className="hidden md:grid grid-cols-12 text-xs font-medium text-gray-400 uppercase tracking-widest pb-3 border-b border-gray-100">
               <span className="col-span-6">Product</span>
               <span className="col-span-2 text-center">Price</span>
               <span className="col-span-2 text-center">Qty</span>
@@ -114,7 +112,7 @@ export default function CartPage() {
                 return (
                   <div
                     key={item.id}
-                    className={`grid grid-cols-12 items-center gap-4 py-4 border-b border-gray-100 transition-opacity ${
+                    className={`grid grid-cols-12 items-center gap-4 py-5 border-b border-gray-100 transition-opacity ${
                       busy ? "opacity-40 pointer-events-none" : ""
                     }`}
                   >
@@ -128,7 +126,7 @@ export default function CartPage() {
                         />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
+                        <p className="text-sm font-semibold text-gray-900 truncate">
                           {item.product.name}
                         </p>
                         {item.product.description && (
@@ -161,7 +159,7 @@ export default function CartPage() {
                         <button
                           onClick={() => handleQty(item.id, item.quantity, -1)}
                           disabled={item.quantity <= 1}
-                          className="w-5 h-5 flex items-center justify-center text-gray-500 disabled:opacity-30 hover:text-gray-900 transition"
+                          className="w-5 h-5 flex items-center justify-center text-gray-500 disabled:opacity-30 hover:text-black transition"
                         >
                           <Minus className="w-3 h-3" />
                         </button>
@@ -170,7 +168,7 @@ export default function CartPage() {
                         </span>
                         <button
                           onClick={() => handleQty(item.id, item.quantity, 1)}
-                          className="w-5 h-5 flex items-center justify-center text-gray-500 hover:text-gray-900 transition"
+                          className="w-5 h-5 flex items-center justify-center text-gray-500 hover:text-black transition"
                         >
                           <Plus className="w-3 h-3" />
                         </button>
@@ -179,7 +177,7 @@ export default function CartPage() {
 
                     {/* Line total + desktop remove */}
                     <div className="col-span-4 md:col-span-2 flex items-center justify-end gap-3">
-                      <span className="text-sm font-semibold text-gray-900">₹{lineTotal}</span>
+                      <span className="text-sm font-bold text-black">₹{lineTotal}</span>
                       <button
                         onClick={() => dispatch(removeItem(item.id))}
                         className="hidden md:flex text-gray-300 hover:text-red-400 transition"
@@ -212,11 +210,13 @@ export default function CartPage() {
             )}
           </div>
 
-          {/* ── Order Summary ─────────────────────────────────────────────────── */}
+          {/* ── Order Summary ─────────────────────────────────────────────────────── */}
           {summary && (
             <div className="lg:w-72 shrink-0">
-              <div className="bg-gray-50 rounded-2xl p-6 sticky top-6">
-                <h2 className="text-base font-semibold text-gray-900 mb-4">Order Summary</h2>
+              <div className="bg-gray-50 rounded-2xl p-6 sticky top-6 border border-gray-100">
+                <h2 className="text-base font-bold uppercase tracking-widest text-black mb-4">
+                  Order Summary
+                </h2>
 
                 <div className="space-y-2.5 text-sm">
                   <SummaryRow label="Subtotal"  value={`₹${summary.subtotal}`} />
@@ -238,28 +238,35 @@ export default function CartPage() {
 
                 <div className="border-t border-gray-200 mt-4 pt-4 flex items-center justify-between">
                   <span className="font-semibold text-gray-900">Total</span>
-                  <span className="text-lg font-bold text-gray-900">₹{summary.total}</span>
+                  <span className="text-lg font-black text-black">₹{summary.total}</span>
                 </div>
 
                 <Link
                   to="/checkout"
-                  className="mt-5 w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium py-3 rounded-xl transition"
+                  className="mt-5 w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white text-sm font-medium py-3 rounded-xl transition"
                 >
                   Checkout <ArrowRight className="w-4 h-4" />
                 </Link>
+
+                {/* Nike-style trust line */}
+                <p className="text-center text-xs text-gray-400 mt-3 tracking-wide">
+                  Secure checkout · Free returns
+                </p>
               </div>
             </div>
           )}
         </div>
 
-        {/* ── You May Also Like ──────────────────────────────────────────────── */}
+        {/* ── You May Also Like ────────────────────────────────────────────────────── */}
         {recommendations.length > 0 && (
           <div className="mt-16">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-semibold text-gray-900">You may also like</h2>
+              <h2 className="text-lg font-black uppercase tracking-tight text-black" style={{ letterSpacing: "-0.5px" }}>
+                You May Also Like
+              </h2>
               <Link
                 to="/products"
-                className="text-sm text-gray-400 hover:text-gray-700 flex items-center gap-1 transition"
+                className="text-sm text-gray-400 hover:text-black flex items-center gap-1 transition"
               >
                 View all <ChevronRight className="w-3.5 h-3.5" />
               </Link>
@@ -279,7 +286,7 @@ export default function CartPage() {
                     />
                   </div>
                   <div className="p-3">
-                    <p className="text-sm font-medium text-gray-800 truncate">{p.name}</p>
+                    <p className="text-sm font-semibold text-gray-800 truncate">{p.name}</p>
                     <p className="text-sm text-gray-500 mt-0.5">₹{Number(p.price).toFixed(2)}</p>
                   </div>
                 </Link>
@@ -293,7 +300,7 @@ export default function CartPage() {
   );
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────────────────────
 
 function SummaryRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
