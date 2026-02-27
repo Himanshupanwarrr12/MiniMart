@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, ChevronDown, Package } from "lucide-react";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/store";
 
 interface NavbarProps {
   username?: string;
@@ -8,11 +10,12 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({
-  username = "John Doe",
-  cartCount = 3,
+  username = "guest ",
+  cartCount = 0,
 }) => {
   const [accountOpen, setAccountOpen] = useState<boolean>(false);
   const navigate = useNavigate()
+  const user = useSelector((store:RootState)=>store.user)
 
   return (
     <nav className="bg-gray-900 text-white w-full">
@@ -60,7 +63,7 @@ const Navbar: React.FC<NavbarProps> = ({
             >
               <span className="text-xs text-gray-400">Hello,</span>
               <span className="text-sm font-bold flex items-center gap-1">
-                {username}
+                { user?.firstName || username}
                 <ChevronDown
                   size={14}
                   className={`transition-transform ${accountOpen ? "rotate-180" : ""}`}
