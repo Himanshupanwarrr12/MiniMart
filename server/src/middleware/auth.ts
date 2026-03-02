@@ -8,23 +8,18 @@ interface JwtPayload {
   userId: number;
 }
 
-// Extend Express Request type
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        id: number;
-        firstName: string;
-        lastName: string | null;
-        email: string;
-        role: Role;
-      };
-    }
-  }
+interface AuthRequest extends Request {
+  user?: {
+    id: number;
+    firstName: string;
+    lastName: string | null;
+    email: string;
+    role: "USER" | "ADMIN";
+  };
 }
 
 export const authenticateToken = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
@@ -87,9 +82,8 @@ export const authenticateToken = async (
   }
 };
 
-// Check if user is admin
 export const isAdmin = (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction,
 ): void => {
