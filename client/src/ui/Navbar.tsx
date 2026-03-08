@@ -24,6 +24,7 @@ const Navbar: React.FC<NavbarProps> = ({
           <span
             className="text-4xl font-extrabold tracking-tight text-white cursor-pointer select-none"
             style={{ fontFamily: "Georgia, serif", letterSpacing: "-1px" }}
+            onClick={()=> navigate("/")}
           >
             Mini<span className="text-gray-400">mart</span>
           </span>
