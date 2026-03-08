@@ -1,5 +1,5 @@
 import type { User } from "../generated/prisma/client.js";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response} from "express";
 import * as profileService from "../services/profileService.js";
 
 export interface AuthRequest extends Request {
@@ -28,11 +28,6 @@ export const getProfile = async (
       });
       return;
     }
-
-    res.status(200).json({
-      success: true,
-      data: profile,
-    });
   } catch (error) {
     console.error("Error fetching profile:", error);
     res.status(500).json({
