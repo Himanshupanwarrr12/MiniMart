@@ -1,9 +1,9 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000", 
-  timeout: 10000,                   
-  withCredentials: true,            
+  baseURL: "http://localhost:5000",
+  timeout: 320000,
+  withCredentials: true,
 });
 
 // Request Interceptor
@@ -15,7 +15,7 @@ axiosInstance.interceptors.request.use(
   (error) => {
     console.log("Request error:", error);
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response Interceptor
@@ -28,9 +28,9 @@ axiosInstance.interceptors.response.use(
 
     // Network Error - server down
     if (!error.response) {
-      console.log("⚠️ Network Error - Backend is not running");
+      console.log("⚠️ Network Error - Server is not running");
       return Promise.reject(
-        new Error("Cannot connect to server. Please try again later.")
+        new Error("Cannot connect to server. Please try again later."),
       );
     }
 
@@ -46,7 +46,7 @@ axiosInstance.interceptors.response.use(
       "Something went wrong";
 
     return Promise.reject(new Error(errorMessage));
-  }
+  },
 );
 
-export default axiosInstance
+export default axiosInstance;
