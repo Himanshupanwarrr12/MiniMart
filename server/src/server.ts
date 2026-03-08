@@ -23,14 +23,17 @@ import adminRouter from "./routes/admin.js";
 import addressRouter from "./routes/address.js";
 import checkoutRouter from "./routes/checkout.js";
 import { prisma } from "./lib/prisma.js";
+import profileRouter from "./routes/profile.js";
 
 app.use("/",authRouter)
 app.use("/",productRouter)
 app.use("/",cartRouter)
 app.use("/",orderRouter)
-app.use("/",adminRouter)
 app.use("/",addressRouter)
 app.use("/",checkoutRouter)
+app.use("/",profileRouter)
+app.use("/",adminRouter)
+
 
 app.get("/",(req:Request,res:Response)=>{
     res.send("Express server is running")
