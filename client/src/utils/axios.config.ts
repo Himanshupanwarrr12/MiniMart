@@ -2,14 +2,13 @@ import axios from "axios";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:5000",
-  timeout: 30000,
+  timeout: 10000,
   withCredentials: true,
 });
 
-// Request Interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    console.log(`➡️ ${config.method?.toUpperCase()} to: ${config.url}`);
+    console.log(`${config.method?.toUpperCase()} to: ${config.url}`);
     return config;
   },
   (error) => {
@@ -18,17 +17,15 @@ axiosInstance.interceptors.request.use(
   },
 );
 
-// Response Interceptor
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
-    console.log("❌ API Error:", error.message);
+    console.log("API Error:", error.message);
 
-    // Network Error - server down
     if (!error.response) {
-      console.log("⚠️ Network Error - Server is not running");
+      console.log("Network Error - Server is not running");
       return Promise.reject(
         new Error("Cannot connect to server. Please try again later."),
       );
@@ -38,6 +35,7 @@ axiosInstance.interceptors.response.use(
 
     if (error.response.status === 401) {
       window.location.href = "/login";
+      return Promise.reject( new Error("Session Expired"));
     }
 
     const errorMessage =
