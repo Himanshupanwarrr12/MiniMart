@@ -64,7 +64,7 @@ const Navbar: React.FC<NavbarProps> = ({
             >
               <span className="text-xs text-gray-400">Hello,</span>
               <span className="text-sm font-bold flex items-center gap-1">
-                { user?.firstName || username}
+                { user?.firstName || username ? user?.firstName : <div className="w-16 h-3 bg-gray-600 rounded animate-pulse"  />}
                 <ChevronDown
                   size={14}
                   className={`transition-transform ${accountOpen ? "rotate-180" : ""}`}
