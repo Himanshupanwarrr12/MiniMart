@@ -21,8 +21,9 @@ const Login = () => {
         email,
         password,
       });
-      console.log("User Data : ", userData.data.data);
+      // console.log("User Data : ", userData.data.data);
       dispatch(addUser(userData.data.data));
+      localStorage.setItem("user",userData.data.data)
       navigate("/");
     } catch (error: unknown) {
       if (error instanceof Error) {
