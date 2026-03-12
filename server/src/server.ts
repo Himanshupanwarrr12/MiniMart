@@ -39,15 +39,6 @@ app.get("/",(req:Request,res:Response)=>{
     res.send("Express server is running")
 })
 
-setInterval(async () => {
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-    console.log('💓 Heartbeat sent at', new Date().toISOString());
-  } catch (error:any) {
-    console.error('💔 Heartbeat failed:', error.message);
-  }
-}, 240000); // 4 minutes
-
 const PORT= process.env.PORT || "5000"
 
 app.listen(PORT,()=>{
