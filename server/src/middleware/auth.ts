@@ -69,7 +69,7 @@ export const authenticateToken = async (
       return;
     }
     if (error instanceof jwt.TokenExpiredError) {
-      res.status(403).json({
+      res.status(401).json({
         success: false,
         error: "Token expired",
       });
