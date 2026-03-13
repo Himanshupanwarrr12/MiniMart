@@ -8,7 +8,6 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    console.log(`${config.method?.toUpperCase()} to: ${config.url}`);
     return config;
   },
   (error) => {
@@ -34,8 +33,10 @@ axiosInstance.interceptors.response.use(
     console.log("Status Code:", error.response.status);
 
     if (error.response.status === 401) {
-      window.location.href = "/login";
-      return Promise.reject( new Error("Session Expired"));
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+      return Promise.reject(new Error("Session Expired"));
     }
 
     const errorMessage =
