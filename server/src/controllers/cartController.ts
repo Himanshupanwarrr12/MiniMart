@@ -1,7 +1,11 @@
+import type { User } from "../generated/prisma/client.js";
 import type { Request, Response } from "express";
 import * as cartService from "../services/cartService.js";
+export interface AuthRequest extends Request {
+  user?: User;
+}
 
-export const getCart = async (req: Request, res: Response): Promise<void> => {
+export const getCart = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
@@ -29,7 +33,7 @@ export const getCart = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const addToCart = async (req: Request, res: Response): Promise<void> => {
+export const addToCart = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
@@ -78,7 +82,7 @@ export const addToCart = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const updateCartItem = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
 ): Promise<void> => {
   try {
@@ -131,7 +135,7 @@ export const updateCartItem = async (
 };
 
 export const removeFromCart = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
 ): Promise<void> => {
   try {
