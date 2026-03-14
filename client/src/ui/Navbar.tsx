@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, ChevronDown, Package } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../store/store";
+import { removeUser } from "../store/slices/userSlice";
+import axiosInstance from "../utils/axios.config";
 
 interface NavbarProps {
   username?: string;
@@ -14,8 +16,34 @@ const Navbar: React.FC<NavbarProps> = ({
   cartCount = 0,
 }) => {
   const [accountOpen, setAccountOpen] = useState<boolean>(false);
-  const navigate = useNavigate()
-  const user = useSelector((store:RootState)=>store.user)
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((store: RootState) => store.user);
+
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post("/logout");
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      dispatch(removeUser());
+      localStorage.removeItem("user");
+      setAccountOpen(false);
+      navigate("/login");
+    }
+  };
+
+  const handleMenuClick = (item: string) => {
+    if (item === "Sign Out") {
+      handleLogout();
+    } else if (item === "Profile") {
+      navigate("/profile");
+      setAccountOpen(false);
+    } else if (item === "Settings") {
+      navigate("");
+      setAccountOpen(false);
+    }
+  };
 
   return (
     <nav className="bg-gray-900 text-white w-full">
@@ -24,7 +52,7 @@ const Navbar: React.FC<NavbarProps> = ({
           <span
             className="text-4xl font-extrabold tracking-tight text-white cursor-pointer select-none"
             style={{ fontFamily: "Georgia, serif", letterSpacing: "-1px" }}
-            onClick={()=> navigate("/")}
+            onClick={() => navigate("/")}
           >
             Mini<span className="text-gray-400">mart</span>
           </span>
@@ -60,11 +88,13 @@ const Navbar: React.FC<NavbarProps> = ({
           <div className="relative">
             <button
               onClick={() => setAccountOpen((p) => !p)}
-              className="flex flex-col items-start px-3 py-1 rounded  hover:outline-1 hover:outline-white transition-all"
+              className="flex flex-col items-start px-3 py-1 rounded hover:outline-1 hover:outline-white transition-all"
             >
               <span className="text-xs text-gray-400">Hello,</span>
               <span className="text-sm font-bold flex items-center gap-1">
-                { user?.firstName || username ? user?.firstName : <div className="w-16 h-3 bg-gray-600 rounded animate-pulse"  />}
+                {user?.firstName || username ? user?.firstName : (
+                  <div className="w-16 h-3 bg-gray-600 rounded animate-pulse" />
+                )}
                 <ChevronDown
                   size={14}
                   className={`transition-transform ${accountOpen ? "rotate-180" : ""}`}
@@ -80,7 +110,10 @@ const Navbar: React.FC<NavbarProps> = ({
                 {["Profile", "Settings", "Sign Out"].map((item) => (
                   <button
                     key={item}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors"
+                    onClick={() => handleMenuClick(item)}
+                    className={`w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors ${
+                      item === "Sign Out" ? "font-medium" : ""
+                    }`}
                   >
                     {item}
                   </button>
@@ -89,7 +122,7 @@ const Navbar: React.FC<NavbarProps> = ({
             )}
           </div>
 
-          <button className="flex flex-col items-start px-3 py-1 rounded  hover:outline-1 hover:outline-white transition-all">
+          <button className="flex flex-col items-start px-3 py-1 rounded hover:outline-1 hover:outline-white transition-all">
             <span className="text-xs text-gray-400">Returns &</span>
             <span className="text-sm font-bold flex items-center gap-1">
               <Package size={14} />
@@ -97,8 +130,10 @@ const Navbar: React.FC<NavbarProps> = ({
             </span>
           </button>
 
-          <button className="flex items-center gap-2 px-3 py-2 rounded  hover:outline-1 hover:outline-white transition-all relative"
-          onClick={()=> navigate("/cart")}>
+          <button
+            className="flex items-center gap-2 px-3 py-2 rounded hover:outline-1 hover:outline-white transition-all relative"
+            onClick={() => navigate("/cart")}
+          >
             <div className="relative">
               <ShoppingCart size={28} />
               {cartCount > 0 && (
