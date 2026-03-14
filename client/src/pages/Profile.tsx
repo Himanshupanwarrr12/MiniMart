@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../store/store";
 import { addUser } from "../store/slices/userSlice";
@@ -27,10 +27,20 @@ const Profile = () => {
   const [errors, setErrors] = useState<FormErrors>({});
 
   const [formData, setFormData] = useState<FormData>({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.email || "",
+    firstName: user?.firstName ?? "",
+    lastName: user?.lastName ?? "",
+    email: user?.email ?? "",
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName ?? "",
+        lastName: user.lastName ?? "",
+        email: user.email ?? "",
+      });
+    }
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -92,14 +102,12 @@ const Profile = () => {
     setEditing(false);
   };
 
-  // Avatar initials
   const initials = `${user?.firstName?.[0] ?? ""}${user?.lastName?.[0] ?? ""}`.toUpperCase();
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10">
       <div className="bg-white w-full max-w-sm rounded-2xl shadow-lg px-8 py-12 flex flex-col gap-6">
 
-        {/* Avatar + name */}
         <div className="flex flex-col items-center gap-3">
           <div className="w-16 h-16 rounded-full bg-gray-900 flex items-center justify-center text-white text-xl font-bold select-none">
             {initials}
@@ -114,27 +122,22 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Divider */}
         <div className="h-px bg-gray-100" />
 
-        {/* Success */}
         {success && (
           <div className="bg-green-50 border border-green-200 text-green-600 text-sm px-4 py-3 rounded-lg">
             {success}
           </div>
         )}
 
-        {/* General error */}
         {errors.general && (
           <div className="bg-red-50 border border-red-200 text-red-500 text-sm px-4 py-3 rounded-lg">
             {errors.general}
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
-          {/* First Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               First Name
@@ -153,7 +156,6 @@ const Profile = () => {
             )}
           </div>
 
-          {/* Last Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Last Name
@@ -167,7 +169,6 @@ const Profile = () => {
             />
           </div>
 
-          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -187,7 +188,6 @@ const Profile = () => {
             )}
           </div>
 
-          {/* Buttons */}
           {!editing ? (
             <button
               type="button"
