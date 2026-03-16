@@ -81,10 +81,7 @@ export const addToCart = async (req: AuthRequest, res: Response): Promise<void> 
   }
 };
 
-export const updateCartItem = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
+export const updateCartItem = async ( req: AuthRequest,res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
@@ -134,10 +131,7 @@ export const updateCartItem = async (
   }
 };
 
-export const removeFromCart = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
+export const removeFromCart = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
