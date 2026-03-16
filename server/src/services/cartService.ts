@@ -67,11 +67,7 @@ export const getOrCreateCart = async (userId: number) => {
   };
 };
 
-export const addItemToCart = async (
-  userId: number,
-  productId: number,
-  quantity: number
-) => {
+export const addItemToCart = async (userId: number,productId: number, quantity: number) => {
   const product = await prisma.product.findUnique({
     where: { id: productId },
     select: { id: true, price: true, name: true },
@@ -137,11 +133,7 @@ export const addItemToCart = async (
   });
 };
 
-export const updateCartItemQuantity = async (
-  userId: number,
-  itemId: number,
-  quantity: number
-) => {
+export const updateCartItemQuantity = async (userId: number, itemId: number, quantity: number) => {
   if (quantity < 1) {
     throw new Error("Quantity must be at least 1");
   }
