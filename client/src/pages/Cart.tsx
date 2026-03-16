@@ -41,7 +41,6 @@ export default function CartPage() {
   const subtotal  = summary ? Number(summary.subtotal) : 0;
   const shipping  = summary ? Number(summary.shipping) : 0;
 
-  // ── Empty state ──────────────────────────────────────────────────────────────
   if (!loading && items.length === 0) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-5 px-4">
@@ -66,7 +65,6 @@ export default function CartPage() {
     <div className="min-h-screen bg-white">
       <div className="max-w-5xl mx-auto px-4 py-10">
 
-        {/* ── Header ───────────────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-black uppercase tracking-tight text-black" style={{ letterSpacing: "-1px" }}>
             Your Cart
@@ -92,10 +90,8 @@ export default function CartPage() {
 
         <div className="flex flex-col lg:flex-row gap-10">
 
-          {/* ── Items List ───────────────────────────────────────────────────────── */}
           <div className="flex-1 space-y-px">
 
-            {/* Column headers — desktop only */}
             <div className="hidden md:grid grid-cols-12 text-xs font-medium text-gray-400 uppercase tracking-widest pb-3 border-b border-gray-100">
               <span className="col-span-6">Product</span>
               <span className="col-span-2 text-center">Price</span>
@@ -116,7 +112,6 @@ export default function CartPage() {
                       busy ? "opacity-40 pointer-events-none" : ""
                     }`}
                   >
-                    {/* Product info */}
                     <div className="col-span-12 md:col-span-6 flex items-center gap-3">
                       <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 shrink-0">
                         <img
@@ -134,7 +129,6 @@ export default function CartPage() {
                             {item.product.description}
                           </p>
                         )}
-                        {/* Remove — mobile */}
                         <button
                           onClick={() => dispatch(removeItem(item.id))}
                           className="md:hidden mt-1 flex items-center gap-1 text-xs text-gray-400 hover:text-red-400 transition"
@@ -148,12 +142,10 @@ export default function CartPage() {
                       </div>
                     </div>
 
-                    {/* Unit price */}
                     <div className="hidden md:flex col-span-2 justify-center text-sm text-gray-500">
                       ₹{Number(item.price).toFixed(2)}
                     </div>
 
-                    {/* Qty stepper */}
                     <div className="col-span-8 md:col-span-2 flex justify-start md:justify-center">
                       <div className="flex items-center gap-1.5 border border-gray-200 rounded-lg px-1.5 py-1">
                         <button
@@ -175,7 +167,6 @@ export default function CartPage() {
                       </div>
                     </div>
 
-                    {/* Line total + desktop remove */}
                     <div className="col-span-4 md:col-span-2 flex items-center justify-end gap-3">
                       <span className="text-sm font-bold text-black">₹{lineTotal}</span>
                       <button
@@ -193,7 +184,6 @@ export default function CartPage() {
               })
             )}
 
-            {/* Delivery notice */}
             {items.length > 0 && (
               <div className="flex items-center gap-2.5 pt-4 text-sm text-gray-500">
                 <Truck className="w-4 h-4 text-green-500 shrink-0" />
@@ -210,7 +200,6 @@ export default function CartPage() {
             )}
           </div>
 
-          {/* ── Order Summary ─────────────────────────────────────────────────────── */}
           {summary && (
             <div className="lg:w-72 shrink-0">
               <div className="bg-gray-50 rounded-2xl p-6 sticky top-6 border border-gray-100">
@@ -248,7 +237,6 @@ export default function CartPage() {
                   Checkout <ArrowRight className="w-4 h-4" />
                 </Link>
 
-                {/* Nike-style trust line */}
                 <p className="text-center text-xs text-gray-400 mt-3 tracking-wide">
                   Secure checkout · Free returns
                 </p>
@@ -257,7 +245,6 @@ export default function CartPage() {
           )}
         </div>
 
-        {/* ── You May Also Like ────────────────────────────────────────────────────── */}
         {recommendations.length > 0 && (
           <div className="mt-16">
             <div className="flex items-center justify-between mb-5">
@@ -300,7 +287,6 @@ export default function CartPage() {
   );
 }
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
 
 function SummaryRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
