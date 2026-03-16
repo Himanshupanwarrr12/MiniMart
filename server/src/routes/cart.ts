@@ -1,11 +1,5 @@
 import express from "express";
-
-import {
-  getCart,
-  addToCart,
-  updateCartItem,
-  removeFromCart,
-} from "../controllers/cartController.js";
+import {getCart,addToCart, updateCartItem,removeFromCart,} from "../controllers/cartController.js";
 import { authenticateToken } from "../middleware/auth.js";
 
 const cartRouter = express.Router();
