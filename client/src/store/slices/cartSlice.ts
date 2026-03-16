@@ -73,7 +73,7 @@ export const addToCart = createAsyncThunk(
 export const updateQuantity = createAsyncThunk(
   "cart/updateQuantity",
   async ({ itemId, quantity }: { itemId: number; quantity: number }) => {
-    await axiosInstance.put(`/cart/${itemId}`, { quantity });
+    await axiosInstance.put(`/cart/update/${itemId}`, { quantity });
     return { itemId, quantity };
   }
 );
@@ -81,7 +81,7 @@ export const updateQuantity = createAsyncThunk(
 export const removeItem = createAsyncThunk(
   "cart/removeItem",
   async (itemId: number) => {
-    await axiosInstance.delete(`/cart/${itemId}`);
+    await axiosInstance.delete(`/cart/remove/${itemId}`);
     return itemId;
   }
 );
