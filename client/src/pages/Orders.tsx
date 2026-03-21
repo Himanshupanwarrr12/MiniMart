@@ -1,4 +1,4 @@
- import { useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { fetchOrders } from "../store/slices/ordersSlice";
@@ -21,7 +21,7 @@ function formatDate(dateStr: string) {
   });
 }
 
- const Orders  = () => {
+const Orders = () =>{
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -55,7 +55,6 @@ function formatDate(dateStr: string) {
     <div className="min-h-screen bg-white">
       <div className="max-w-3xl mx-auto px-4 py-10">
 
-        {/* Header */}
         <h1
           className="text-2xl font-black uppercase tracking-tight text-black mb-8"
           style={{ letterSpacing: "-1px" }}
@@ -66,14 +65,12 @@ function formatDate(dateStr: string) {
           </span>
         </h1>
 
-        {/* Error */}
         {error && (
           <div className="mb-6 text-sm text-red-500 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
             {error}
           </div>
         )}
 
-        {/* Loading Skeleton */}
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
@@ -98,19 +95,15 @@ function formatDate(dateStr: string) {
           <div className="space-y-4">
             {orders.map((order) => {
               const status = statusConfig[order.status] ?? statusConfig.PENDING;
-              const itemCount = order.items.reduce((sum, i) => sum + i.quantity, 0);
 
               return (
                 <div
                   key={order.id}
                   className="border border-gray-100 rounded-2xl p-5 hover:shadow-md transition-shadow"
                 >
-                  {/* Top row — Order ID + Status */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-bold text-gray-900">
-                        Order #{order.id}
-                      </p>
+                      <p className="text-sm font-bold text-gray-900">Order #{order.id}</p>
                       <span className="text-gray-300">·</span>
                       <div className="flex items-center gap-1 text-xs text-gray-400">
                         <Clock className="w-3 h-3" />
@@ -122,16 +115,15 @@ function formatDate(dateStr: string) {
                     </span>
                   </div>
 
-                  {/* Product images row */}
                   <div className="flex gap-2 mb-4">
                     {order.items.slice(0, 4).map((item) => (
                       <div
-                        key={item.id}
+                        key={item.productId}
                         className="w-12 h-12 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 shrink-0"
                       >
                         <img
-                          src={item.product.image}
-                          alt={item.product.name}
+                          src={item.productImage}
+                          alt={item.productName}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -145,11 +137,10 @@ function formatDate(dateStr: string) {
                     )}
                   </div>
 
-                  {/* Bottom row */}
                   <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                     <div className="flex items-center gap-3">
                       <p className="text-xs text-gray-400">
-                        {itemCount} {itemCount === 1 ? "item" : "items"}
+                        {order.itemCount} {order.itemCount === 1 ? "item" : "items"}
                       </p>
                       {order.total && (
                         <>
@@ -172,7 +163,6 @@ function formatDate(dateStr: string) {
             })}
           </div>
         )}
-
       </div>
     </div>
   );
