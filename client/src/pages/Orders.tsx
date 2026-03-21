@@ -1,7 +1,7 @@
  import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { fetchOrders } from "../store/slices/orderSlice";
+import { fetchOrders } from "../store/slices/ordersSlice";
 import { ShoppingBag, ChevronRight, Clock } from "lucide-react";
 
 const statusConfig: Record<string, { label: string; color: string }> = {
