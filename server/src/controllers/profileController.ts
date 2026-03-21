@@ -6,10 +6,7 @@ export interface AuthRequest extends Request {
   user?: User;
 }
 
-export const getProfile = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
+export const getProfile = async (req: AuthRequest,res: Response,): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
