@@ -1,10 +1,12 @@
 import type { Request, Response } from "express";
 import * as orderService from "../services/orderService.js";
+import type { User } from "../generated/prisma/client.js";
 
-export const createOrder = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export interface AuthRequest extends Request {
+  user?: User;
+}
+
+export const createOrder = async (req: AuthRequest,res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
@@ -66,7 +68,7 @@ export const createOrder = async (
 };
 
 export const getAllOrders = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
@@ -97,7 +99,7 @@ export const getAllOrders = async (
 };
 
 export const getOrderDetails = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
@@ -143,7 +145,7 @@ export const getOrderDetails = async (
 };
 
 export const cancelOrder = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
