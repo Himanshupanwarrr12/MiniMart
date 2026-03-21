@@ -1,10 +1,12 @@
 import type { Request, Response } from "express";
 import * as addressService from "../services/addressService.js";
+import type { User } from "../generated/prisma/client.js";
 
-export const getUserAddresses = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export interface AuthRequest extends Request {
+  user?: User;
+}
+
+export const getUserAddresses = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
@@ -29,10 +31,7 @@ export const getUserAddresses = async (
   }
 };
 
-export const getAddress = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getAddress = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
@@ -75,10 +74,7 @@ export const getAddress = async (
   }
 };
 
-export const createAddress = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const createAddress = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
@@ -150,10 +146,7 @@ export const createAddress = async (
   }
 };
 
-export const updateAddress = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const updateAddress = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
@@ -201,21 +194,17 @@ export const updateAddress = async (
       return;
     }
 
-    const address = await addressService.updateAddress(
-      req.user.id,
-      addressId,
-      {
-        fullName,
-        phoneNumber,
-        addressLine1,
-        addressLine2,
-        city,
-        state,
-        pinCode,
-        addressType,
-        isDefault,
-      }
-    );
+    const address = await addressService.updateAddress(req.user.id, addressId, {
+      fullName,
+      phoneNumber,
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      pinCode,
+      addressType,
+      isDefault,
+    });
 
     res.status(200).json({
       success: true,
@@ -231,10 +220,7 @@ export const updateAddress = async (
   }
 };
 
-export const deleteAddress = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const deleteAddress = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
@@ -269,10 +255,7 @@ export const deleteAddress = async (
   }
 };
 
-export const setDefaultAddress = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const setDefaultAddress = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
@@ -292,10 +275,7 @@ export const setDefaultAddress = async (
       return;
     }
 
-    const address = await addressService.setDefaultAddress(
-      req.user.id,
-      addressId
-    );
+    const address = await addressService.setDefaultAddress(req.user.id, addressId);
 
     res.status(200).json({
       success: true,
