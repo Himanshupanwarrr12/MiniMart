@@ -1,10 +1,12 @@
 import type { Request, Response } from "express";
 import * as checkoutService from "../services/checkoutService.js";
+import type { User } from "../generated/prisma/client.js";
 
-export const getCheckoutReview = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+interface AuthRequest extends Request {
+  user?: User;
+}
+
+export const getCheckoutReview = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({
