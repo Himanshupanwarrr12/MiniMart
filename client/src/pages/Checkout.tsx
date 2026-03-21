@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { fetchAddresses, createAddress } from "../store/slices/addressSlice";
-import { createOrder } from "../store/slices/orderSlice";
+import { createOrder } from "../store/slices/ordersSlice";
 import type { Address } from "../store/slices/addressSlice";
 
 const emptyForm = {
