@@ -11,10 +11,7 @@ interface NavbarProps {
   cartCount?: number;
 }
 
-const Navbar: React.FC<NavbarProps> = ({
-  username = "guest ",
-  cartCount = 0,
-}) => {
+const Navbar: React.FC<NavbarProps> = ({username = "guest ",cartCount = 0,}) => {
   const [accountOpen, setAccountOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -122,7 +119,8 @@ const Navbar: React.FC<NavbarProps> = ({
             )}
           </div>
 
-          <button className="flex flex-col items-start px-3 py-1 rounded hover:outline-1 hover:outline-white transition-all">
+          <button className="flex flex-col items-start px-3 py-1 rounded hover:outline-1 hover:outline-white transition-all"
+          onClick={()=> navigate("/orders")}>
             <span className="text-xs text-gray-400">Returns &</span>
             <span className="text-sm font-bold flex items-center gap-1">
               <Package size={14} />
