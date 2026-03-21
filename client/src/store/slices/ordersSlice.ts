@@ -2,39 +2,66 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../utils/axios.config";
 
 export interface OrderItem {
+  productId: number;
+  productName: string;
+  productImage: string;
+  quantity: number;
+}
+
+export interface OrderDetailItem {
   id: number;
+  orderId: number;
   productId: number;
   quantity: number;
   price: string;
   product: {
     id: number;
     name: string;
-    image: string;
     price: string;
+    image: string;
+    description?: string;
   };
 }
 
 export interface Order {
   id: number;
+  userId?: number;
+  addressId?: number;
   status: "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
   createdAt: string;
-  total?: string;
   estimatedDelivery?: string;
+  itemCount?: number;
+  total?: string;
   items: OrderItem[];
-  address?: {
-    fullName: string;
-    phoneNumber: string;
-    addressLine1: string;
-    addressLine2?: string;
-    city: string;
-    state: string;
-    pinCode: string;
+  summary?: {
+    subtotal: string;
+    tax: string;
+    shipping: string;
+    total: string;
+    itemCount: number;
+  };
+}
+
+export interface OrderDetail extends Omit<Order, "items"> {
+  items: OrderDetailItem[];
+  summary: {
+    subtotal: string;
+    tax: string;
+    shipping: string;
+    total: string;
+    itemCount: number;
+  };
+  user?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
   };
 }
 
 interface OrderState {
   items: Order[];
-  selectedOrder: Order | null;
+  selectedOrder: OrderDetail | null;
   loading: boolean;
   placing: boolean;
   error: string | null;
@@ -43,7 +70,7 @@ interface OrderState {
 export const createOrder = createAsyncThunk(
   "orders/create",
   async (addressId: number) => {
-    const response = await axiosInstance.post("/orders", { addressId });
+    const response = await axiosInstance.post("/orders/create", { addressId });
     return response.data.data;
   }
 );
@@ -60,7 +87,7 @@ export const fetchOrderById = createAsyncThunk(
   "orders/fetchById",
   async (orderId: number) => {
     const response = await axiosInstance.get(`/orders/${orderId}`);
-    return response.data.data as Order;
+    return response.data.data as OrderDetail;
   }
 );
 
