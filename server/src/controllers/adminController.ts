@@ -1,10 +1,7 @@
 import type { Request, Response } from "express";
 import * as adminService from "../services/adminService.js";
 
-export const getDashboard = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getDashboard = async (req: Request, res: Response): Promise<void> => {
   try {
     const data = await adminService.getDashboardStats();
 
@@ -21,10 +18,7 @@ export const getDashboard = async (
   }
 };
 
-export const getAllOrders = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getAllOrders = async (req: Request, res: Response): Promise<void> => {
   try {
     const { status, search } = req.query;
 
@@ -49,10 +43,7 @@ export const getAllOrders = async (
   }
 };
 
-export const updateOrderStatus = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const updateOrderStatus = async (req: Request, res: Response): Promise<void> => {
   try {
     const orderId = Number(req.params.id);
     const { status } = req.body;
