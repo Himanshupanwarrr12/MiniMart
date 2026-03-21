@@ -58,7 +58,6 @@ const  Checkout = () =>{
     dispatch(fetchAddresses());
   }, [dispatch]);
 
-  // auto select default address or show form if none
   useEffect(() => {
     if (!addressLoading) {
       if (addresses.length === 0) {
@@ -71,7 +70,6 @@ const  Checkout = () =>{
     }
   }, [addresses, addressLoading]);
 
-  // redirect if cart is empty
   useEffect(() => {
     if (items.length === 0 && !orderSuccess) {
       navigate("/cart");
@@ -134,7 +132,6 @@ const  Checkout = () =>{
   const subtotal = summary ? Number(summary.subtotal) : 0;
   const shipping = summary ? Number(summary.shipping) : 0;
 
-  // ─── Order Success Screen ──────────────────────────────────────
   if (orderSuccess) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-5 px-4">
